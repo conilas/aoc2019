@@ -8,5 +8,6 @@ thirdFloor a = a `quot` 3
 
 -- dizz just cause I want to use tacit style lol
 sub b = b - 2
- 
+
+-- just call in ghci session checkResult [...] to see result
 checkResult = foldr (+) 0 . map mapValue
