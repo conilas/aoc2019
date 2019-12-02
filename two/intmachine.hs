@@ -68,6 +68,27 @@ findValueRec lookupIndex values = let retrievedValue = fromListRetrieveLast valu
 findValueRecZero = findValueRec 0
 
 -- call rec starting with initial state and empty rewrite rules
-applyStateMachine = findValueRecZero . transformToState
+applyStateMachine fin sin = findValueRecZero . (applyInput fin sin) . transformToState
+applyInput fin sin init = let firstList = buildNewList init (1, fin) in
+                            buildNewList firstList (2, 2)
 
-getLastNthArg arg = fmap sndT . fromListRetrieveLastInv arg . applyStateMachine 
+getLastNthArg arg fin sin = fmap sndT . fromListRetrieveLastInv arg . (applyStateMachine fin sin)
+
+getOutput fin sin = getLastNthArg 0 fin sin
+
+-- fuzzy untill output (worst case is ... a lot of time lol)
+nextPair fin sin = if sin == 99 then (fin + 1, 0) else (fin, sin + 1)
+
+testRecMut curFin curSin desired init = let nextValues = nextPair curFin curSin in 
+                                     testRec (fst nextValues) (snd nextValues) desired init
+
+checkEndCondition :: Maybe Int -> Int -> Bool
+checkEndCondition Nothing _ = False
+checkEndCondition (Just a) b = a == b
+
+testRec fin sin desired init = if checkEndCondition (getOutput fin sin init) desired
+                            then (fin, sin) 
+                            else testRecMut fin sin desired init
+
+testUntill desired init = testRec 0 0 desired init 
+
