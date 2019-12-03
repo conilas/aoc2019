@@ -1,4 +1,4 @@
-import Data.Sort
+ import Data.Sort
 
 -- utils
 fstT (a,_,_) = a
@@ -70,7 +70,7 @@ findValueRecZero = findValueRec 0
 -- call rec starting with initial state and empty rewrite rules
 applyStateMachine fin sin = findValueRecZero . (applyInput fin sin) . transformToState
 applyInput fin sin init = let firstList = buildNewList init (1, fin) in
-                            buildNewList firstList (2, 2)
+                            buildNewList firstList (2, sin)
 
 getLastNthArg arg fin sin = fmap sndT . fromListRetrieveLastInv arg . (applyStateMachine fin sin)
 
@@ -91,4 +91,3 @@ testRec fin sin desired init = if checkEndCondition (getOutput fin sin init) des
                             else testRecMut fin sin desired init
 
 testUntill desired init = testRec 0 0 desired init 
-
