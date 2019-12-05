@@ -17,7 +17,7 @@ collectDigitsRec number acc =
     let newNumber = number - (decRepresentationToNumber newDigit) in
       let newAcc = acc ++ [fst newDigit] in
         if newNumber == 0 then newAcc else collectDigitsRec newNumber newAcc
- 
+
 collectDigits number = collectDigitsRec number []
 
 -- our predicates
@@ -37,13 +37,18 @@ matchEqualPair (x:xs) =
 
 hasPair = matchEqualPair . toPairs
 
-toListOfPairs [x] accList acc = accList
-toListOfPairs (x:xs) accList (y:ys) =
+toListOfPairsRec [] accList acc = accList ++ [acc]
+toListOfPairsRec (x:xs) accList (y:ys) =
   let acc = (y:ys) in
-    if (x == head acc) then toListOfPairs xs accList (acc ++ [x, head xs]) else toListOfPairs xs (accList ++ [acc]) []
-toListOfPairs (x:xs) accList [] =
-  if (x == head xs) then toListOfPairs (tail xs) accList ([x, head xs]) else toListOfPairs xs [] []
+    if (x == head acc) then toListOfPairsRec xs accList (acc ++ [x]) else toListOfPairsRec xs (accList ++ [acc]) [x]
+toListOfPairsRec (x:xs) accList [] =
+  if (x == head xs) then toListOfPairsRec (tail xs) accList ([x, head xs]) else toListOfPairsRec xs [] []
+toListOfPairs list =
+  toListOfPairsRec list [] []
 
+twoPair [] = False
+twoPair (x:xs) =
+  if length x == 2 then True else twoPair xs
 
 -- actually callable functions
 
@@ -56,4 +61,5 @@ mkList begin = filterCorrectList . (map collectDigits) . (fullRange begin)
 -- needed othewise WSL will explode your memory
 -- so compile then run
 main = do
-  print (length (mkList 402328 864247 ))
+  print (length (mkList 402328 864247 )) -- first part
+  print (length (filter twoPair (map toListOfPairs (mkList 402328 864247)))) -- second part
