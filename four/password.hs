@@ -37,6 +37,14 @@ matchEqualPair (x:xs) =
 
 hasPair = matchEqualPair . toPairs
 
+toListOfPairs [x] accList acc = accList
+toListOfPairs (x:xs) accList (y:ys) =
+  let acc = (y:ys) in
+    if (x == head acc) then toListOfPairs xs accList (acc ++ [x, head xs]) else toListOfPairs xs (accList ++ [acc]) []
+toListOfPairs (x:xs) accList [] =
+  if (x == head xs) then toListOfPairs (tail xs) accList ([x, head xs]) else toListOfPairs xs [] []
+
+
 -- actually callable functions
 
 hasSixDigits = ((==) 6) . length
